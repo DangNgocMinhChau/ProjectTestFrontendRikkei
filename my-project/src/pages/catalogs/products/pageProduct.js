@@ -23,6 +23,7 @@ import {
   deleteProduct,
   findRequestProduct,
 } from "../../../util/handleRequest";
+import TableProduct from "./tableProduct";
 export default function PageProduct(props) {
   const dataResponse = useList();
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,47 +44,12 @@ export default function PageProduct(props) {
   const handleSearchProducts = (value) => {
     setValueSearch(value);
     findRequestProduct(
-      `${findProductByCategory}/${value.category}/products?limit=${value.limit}&skip=${value.skip}`,
+      `${findProductByCategory}/${value.category}/products?limit=${
+        value.limit ? value.limit : "10"
+      }&skip=${value.skip ? value.skip : "1"}`,
       dataResponse
     );
   };
-
-  //  -------------------------------------------------- //
-  const columns = [
-    {
-      title: "No.",
-      dataIndex: "key",
-      key: "key",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "name",
-    },
-    {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: (item, index) => (
-        <Popconfirm
-          key={index}
-          title="Delete"
-          description="Are you sure to delete?"
-          onConfirm={() => handleDelete(item.id)}
-          onCancel={() => cancel}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button danger>Delete</Button>
-        </Popconfirm>
-      ),
-    },
-  ];
 
   const handleChangePage = (e) => {
     if (checkSearch) {
@@ -141,7 +107,6 @@ export default function PageProduct(props) {
               <Button
                 onClick={() => handleOpenForm()}
                 type="success"
-                // shape="circle"
                 icon={<PlusOutlined />}
               />
             </Tooltip>
@@ -164,7 +129,7 @@ export default function PageProduct(props) {
           <FormProduct onSubmit={handleCreateProduct} />
         ) : (
           <>
-            <Table pagination={false} dataSource={arr} columns={columns} />
+            <TableProduct dataSource={arr} onDelete={handleDelete} onCancel={cancel}/>
             <Pagination
               onChange={(e) => {
                 handleChangePage(e);
